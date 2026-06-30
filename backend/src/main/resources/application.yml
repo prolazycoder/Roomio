@@ -6,7 +6,7 @@ server:
 spring:
   application:
     name: pg-hostel-core
-  
+
   datasource:
     url: jdbc:postgresql://localhost:5432/hostel_db
     username: postgres
@@ -20,8 +20,14 @@ spring:
       connection-timeout: 20000
       max-lifetime: 1200000
 
+  # Disable Spring Boot's auto schema.sql runner — JPA manages DDL
+  sql:
+    init:
+      mode: never
+
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: true
     hibernate:
       ddl-auto: update
     show-sql: true
@@ -29,13 +35,37 @@ spring:
       hibernate:
         format_sql: true
         use_sql_comments: true
-        # Shared-schema multi-tenancy configurations can be plugged in here if switching to database/schema level later
         multiTenancy: NONE
         default_schema: public
 
-# Custom JWT configuration properties
+# Springdoc / Swagger UI configuration
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+    display-request-duration: true
+
+# Custom application properties
 app:
   jwt:
     secret: 9a4f2c8d3b7a1e5f8c6d4e2b0a8f7e6d5c4b3a2e1f0d9c8b7a6f5e4d3c2b1a0f9a4f2c8d3b7a1e5f8c6d4e2b0a8f7e6d5c4b3a2e1f0d9c8b7a6f5e4d3c2b1a0f
-    access-token-expiration-ms: 900000 # 15 minutes (short-lived JWT for auto-refresh validation)
+    access-token-expiration-ms: 900000   # 15 minutes
     refresh-token-expiration-ms: 604800000 # 7 days
+
+  # WhatsApp Cloud API (Meta) settings
+  whatsapp:
+    verify-token: YOUR_WEBHOOK_VERIFY_TOKEN
+    phone-number-id: YOUR_PHONE_NUMBER_ID
+    access-token: YOUR_META_ACCESS_TOKEN
+    api-url: https://graph.facebook.com/v19.0
+
+  # AI provider for NL→SQL translation
+  ai:
+    gemini-api-key: YOUR_GEMINI_API_KEY
+    gemini-model: gemini-1.5-flash
+    gemini-api-url: https://generativelanguage.googleapis.com/v1beta
+    max-result-rows: 20
+

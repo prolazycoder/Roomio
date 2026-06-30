@@ -42,8 +42,19 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/organizations/onboard").permitAll()
+                        // Public auth endpoints
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/organizations/onboard").permitAll()
+                        // Swagger / OpenAPI (no context-path prefix needed here)
+                        .requestMatchers(
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs",
+                                "/v3/api-docs/**",
+                                "/webjars/**"
+                        ).permitAll()
+                        // WhatsApp webhook (GET = verification, POST = messages — called by Meta)
+                        .requestMatchers("/whatsapp/webhook").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
